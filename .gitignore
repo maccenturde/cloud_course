@@ -416,3 +416,14 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+    
+# Python virtual environments
+# Ignore this specific venv created for the cloud native app
+venv_cloud_native_app/
+# Common virtualenv/venv names
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
