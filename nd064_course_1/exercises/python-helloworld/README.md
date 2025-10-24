@@ -91,7 +91,7 @@ La app está diseñada para ser usada como ejemplo en ejercicios o demos locales
 Construir y ejecutar (comportamiento por defecto):
 
 ```bash
-./run_docker_exec.sh
+./run_docker.sh
 ```
 
 Esto crea la imagen `python-helloworld:local` y arranca un contenedor llamado `python-helloworld-container` exponiendo el puerto `5000`.
@@ -99,26 +99,26 @@ Esto crea la imagen `python-helloworld:local` y arranca un contenedor llamado `p
 Construcción sin cache:
 
 ```bash
-./run_docker_exec.sh --no-cache
+./run_docker.sh --no-cache
 ```
 
 Usar un nombre/etiqueta personalizados y eliminar contenedor previo si existe:
 
 ```bash
-./run_docker_exec.sh --image myname/helloworld:dev --rm-old
+./run_docker.sh --image myname/helloworld:dev --rm-old
 ```
 
 Etiquetar adicionalmente la imagen construida:
 
 ```bash
-./run_docker_exec.sh --tag latest
+./run_docker.sh --tag latest
 ```
 
 Solo construir / solo ejecutar:
 
 ```bash
-./run_docker_exec.sh --build-only
-./run_docker_exec.sh --run-only
+./run_docker.sh --build-only
+./run_docker.sh --run-only
 ```
 
 ## Uso del script `run_docker_exec.sh`
@@ -139,13 +139,13 @@ Ejemplos rápidos:
 
 ```bash
 # Listar contenedores e imágenes
-./run_docker_exec.sh --list
+./run_docker.sh --list
 
 # Eliminar contenedor (pedirá confirmación)
-./run_docker_exec.sh --rm-container python-helloworld-container
+./run_docker.sh --rm-container python-helloworld-container
 
 # Forzar sin confirmación
-./run_docker_exec.sh --rm-container python-helloworld-container --force
+./run_docker.sh --rm-container python-helloworld-container --force
 ```
 
 ## Endpoints
@@ -225,5 +225,3 @@ docker ps -a
 - Incorporar tests simples y un `Dockerfile` multi-stage si se añaden dependencias compiladas.
 
 ---
-
-Si quieres, hago el commit local de este README (no haré push remoto). ¿Confirmas el mensaje de commit sugerido?

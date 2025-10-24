@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# run_docker_exec.sh - helper to build and run the Docker image for this Flask app.
+# run_docker.sh - helper to build and run the Docker image for this Flask app.
 # Includes usage examples and an extra tag option.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -50,31 +50,31 @@ examples() {
 Examples:
 
   # Build and run (default)
-  ./run_docker_exec.sh
+  ./run_docker.sh
 
   # Force rebuild without cache
-  ./run_docker_exec.sh --no-cache
+  ./run_docker.sh --no-cache
 
   # Use custom image name:tag and remove an old container with same name
-  ./run_docker_exec.sh --image myname/helloworld:dev --rm-old
+  ./run_docker.sh --image myname/helloworld:dev --rm-old
 
   # Also tag the built image as 'latest'
-  ./run_docker_exec.sh --tag latest
+  ./run_docker.sh --tag latest
 
   # Only build the image
-  ./run_docker_exec.sh --build-only
+  ./run_docker.sh --build-only
 
   # Only run an existing image
-  ./run_docker_exec.sh --run-only
+  ./run_docker.sh --run-only
 
   # List containers and images
-  ./run_docker_exec.sh --list
+  ./run_docker.sh --list
 
   # Remove a container (will ask for confirmation)
-  ./run_docker_exec.sh --rm-container python-helloworld-container
+  ./run_docker.sh --rm-container python-helloworld-container
 
   # Remove an image (will ask for confirmation)
-  ./run_docker_exec.sh --rm-image python-helloworld:local
+  ./run_docker.sh --rm-image python-helloworld:local
 
 EOG
 }
