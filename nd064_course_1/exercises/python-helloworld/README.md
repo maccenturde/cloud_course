@@ -12,7 +12,6 @@
 - [Endpoints](#endpoints)
 - [Logs & debugging](#logs--debugging)
 - [Troubleshooting](#troubleshooting)
-- [Next steps](#next-steps)
 
 ---
 
@@ -152,12 +151,3 @@ docker exec -it python-helloworld-container tail -f /app/app.log
 docker ps -a
 ```
 
-## Next steps / ideas
-
-- Rename `run_docker.sh` to a shorter name if desired (already done in this repo).
-- Add a `dev` target to the `Makefile` that mounts source code for live development.
-- Add tests and CI to validate the app and image builds.
-
----
-
-If you want, I can commit this English README now (I will not push to remote unless you ask). Would you like me to commit it? If yes, tell me the commit message to use or I can use a default message.
