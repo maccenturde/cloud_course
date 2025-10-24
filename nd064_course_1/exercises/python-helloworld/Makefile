@@ -1,5 +1,6 @@
 # Makefile helper for the python-helloworld exercise
 
+
 IMAGE := python-helloworld
 TAG := local
 IMAGE_FULL := $(IMAGE):$(TAG)
@@ -9,19 +10,21 @@ SCRIPT := ./run_docker.sh
 .PHONY: help build build-no-cache run run-detached stop logs list rm-container rm-image tag clean
 
 help:
-	@echo "Makefile targets for python-helloworld"
+	@echo "Makefile targets for python-helloworld (simple wrappers)"
 	@echo
 	@echo "  make build            # Build image ($(IMAGE_FULL))"
 	@echo "  make build-no-cache   # Build image without cache"
-	@echo "  make run              # Build (if needed) and run container (detached)"
+	@echo "  make run [ARGS=...]   # Build (if needed) and run container; pass flags to script via ARGS"
+	@echo "                       # Example: make run ARGS='--no-cache --tag latest'"
 	@echo "  make run-detached     # Alias for make run"
 	@echo "  make stop             # Stop and remove container"
 	@echo "  make logs             # Follow container logs"
 	@echo "  make list             # List containers and images"
-	@echo "  make rm-container RM_CONTAINER=<name|id>  # Remove specified container (asks confirmation by default)"
-	@echo "  make rm-image RM_IMAGE=<name|id>          # Remove specified image (asks confirmation by default)"
+	@echo "  make rm-container RM_CONTAINER=<name|id> [FORCE=1]  # Remove container (use FORCE=1 to skip confirm)"
+	@echo "  make rm-image RM_IMAGE=<name|id> [FORCE=1]          # Remove image (use FORCE=1 to skip confirm)"
 	@echo "  make tag TAG_NAME=<tag>  # Tag the built image as $(IMAGE):<tag>"
 	@echo "  make clean            # Remove the local image ($(IMAGE_FULL))"
+
 
 build:
 	@$(SCRIPT) --build-only
@@ -29,8 +32,9 @@ build:
 build-no-cache:
 	@$(SCRIPT) --no-cache --build-only
 
+
 run: build
-	@$(SCRIPT)
+	@$(SCRIPT) $(ARGS)
 
 run-detached: run
 
@@ -46,13 +50,21 @@ logs:
 list:
 	@$(SCRIPT) --list
 
+
+# Allow skipping confirmation by passing FORCE=1 (will forward --force to the script)
+FORCE_FLAG :=
+ifeq ($(FORCE),1)
+FORCE_FLAG := --force
+endif
+
 rm-container:
-	@if [ -z "$(RM_CONTAINER)" ]; then echo "Usage: make rm-container RM_CONTAINER=<name|id>"; exit 1; fi
-	@$(SCRIPT) --rm-container $(RM_CONTAINER)
+	@if [ -z "$(RM_CONTAINER)" ]; then echo "Usage: make rm-container RM_CONTAINER=<name|id> [FORCE=1]"; exit 1; fi
+	@$(SCRIPT) --rm-container $(RM_CONTAINER) $(FORCE_FLAG)
+
 
 rm-image:
-	@if [ -z "$(RM_IMAGE)" ]; then echo "Usage: make rm-image RM_IMAGE=<name|id>"; exit 1; fi
-	@$(SCRIPT) --rm-image $(RM_IMAGE)
+	@if [ -z "$(RM_IMAGE)" ]; then echo "Usage: make rm-image RM_IMAGE=<name|id> [FORCE=1]"; exit 1; fi
+	@$(SCRIPT) --rm-image $(RM_IMAGE) $(FORCE_FLAG)
 
 tag:
 	@if [ -z "$(TAG_NAME)" ]; then echo "Usage: make tag TAG_NAME=<tag>"; exit 1; fi
