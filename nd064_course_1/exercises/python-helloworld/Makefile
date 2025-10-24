@@ -9,13 +9,15 @@ SCRIPT := ./run_docker.sh
 
 .PHONY: help build build-no-cache run run-detached stop logs list rm-container rm-image tag clean
 
+
 help:
 	@echo "Makefile targets for python-helloworld (simple wrappers)"
 	@echo
 	@echo "  make build            # Build image ($(IMAGE_FULL))"
 	@echo "  make build-no-cache   # Build image without cache"
-	@echo "  make run [ARGS=...]   # Build (if needed) and run container; pass flags to script via ARGS"
-	@echo "                       # Example: make run ARGS='--no-cache --tag latest'"
+	@echo "  make run [ARGS=...] [TAG=<tag>]  # Build (if needed) and run container; pass flags to script via ARGS"
+	@echo "                       # Example: make run TAG=dev ARGS='--no-cache'"
+	@echo "                       # Default TAG is '$(TAG)' (you can override: make run TAG=dev)"
 	@echo "  make run-detached     # Alias for make run"
 	@echo "  make stop             # Stop and remove container"
 	@echo "  make logs             # Follow container logs"
@@ -34,8 +36,8 @@ build-no-cache:
 
 
 run: build
-	@# Always add the 'latest' tag when running via make
-	@$(SCRIPT) $(ARGS) --tag latest
+	@# Forward ARGS to script and tag the image with $(TAG) (override TAG via 'make run TAG=dev')
+	@$(SCRIPT) $(ARGS) --tag $(TAG)
 
 run-detached: run
 
