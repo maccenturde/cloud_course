@@ -1,221 +1,163 @@
-## Python Helloworld (Flask) - Dockerized
-
-Un pequeño proyecto de ejemplo que contiene una aplicación Flask ligera y scripts para construir y ejecutar la imagen Docker localmente.
-
-Características principales
-- Aplicación Flask simple que expone el puerto 5000
-- Dockerfile listo para construir una imagen reproducible
-- Script `run_docker_exec.sh` para construir, ejecutar y administrar la imagen/contenedor desde la línea de comandos
-
-¿Qué hace la aplicación?
-
-La aplicación es una pequeña API Flask con tres rutas principales:
-
-- `/` : devuelve un simple texto "Hello World!" y escribe un registro de información indicando que la petición principal fue exitosa.
-
-- `/status` : devuelve JSON con el estado de la aplicación, por ejemplo:
-
-  ```json
-  {"result": "OK - healthy"}
-  ```
-
-- `/metrics` : devuelve JSON con métricas simuladas en el formato:
-
-  ```json
-  {"status":"success","code":0,"data":{"UserCount":140,"UserCountActive":23}}
-  ```
-
-Además, la app configura logging que escribe a `app.log` (incluye logs de la propia aplicación y los logs de Werkzeug/requests). Al ejecutar la app dentro del contenedor, revisa `app.log` o usa `docker logs -f <container>` para ver la salida en tiempo real.
-
-Requisitos
-- Docker instalado en el host
-- Opcional: añadir tu usuario al grupo `docker` o usar `sudo` para ejecutar comandos Docker
-
-Cómo usar
-
-1) Construir y ejecutar (flujo por defecto)
-
-   ./run_docker_exec.sh
-
-   Esto construye la imagen por defecto `python-helloworld:local` y arranca un contenedor llamado `python-helloworld-container` mapeando el puerto 5000.
-
-2) Forzar reconstrucción sin cache
-
-   ./run_docker_exec.sh --no-cache
-
-3) Usar nombre/etiqueta de imagen personalizado
-
-   ./run_docker_exec.sh --image myname/helloworld:dev --rm-old
-
-4) Etiquetar adicionalmente la imagen construida
-
-   ./run_docker_exec.sh --tag latest
-
-5) Solo construir o solo ejecutar
-
-   ./run_docker_exec.sh --build-only
-   ./run_docker_exec.sh --run-only
-
-Administración de contenedores e imágenes
-
 # Python Helloworld (Flask) — Dockerized
 
-> Ejemplo pequeño y auto-contenido que muestra una app Flask con endpoints, logging y un helper para construir/ejecutar la imagen Docker.
+> A small, self-contained example showing a Flask app with endpoints, logging and a helper script to build/run the Docker image.
 
 ---
 
-## Tabla de contenidos
+## Table of Contents
 
-- [Descripción](#descripción)
+- [Description](#description)
 - [Quick start (Docker)](#quick-start-docker)
-- [Uso del script `run_docker_exec.sh`](#uso-del-script-rundocker_execsh)
+- [Using the helper script](#using-the-helper-script)
 - [Endpoints](#endpoints)
-- [Logs y debugging](#logs-y-debugging)
-- [Solución de problemas](#solución-de-problemas)
-- [Siguientes pasos](#siguientes-pasos)
+- [Logs & debugging](#logs--debugging)
+- [Troubleshooting](#troubleshooting)
+- [Next steps](#next-steps)
 
 ---
 
-## Descripción
+## Description
 
-Esta carpeta contiene una pequeña aplicación Flask y todo lo necesario para ejecutarla en Docker:
+This directory contains a minimal Flask application and the necessary files to run it in Docker:
 
-- `app.py`: la aplicación Flask (3 rutas: `/`, `/status`, `/metrics`).
-- `Dockerfile`: instrucciones para construir la imagen basada en Python.
-- `run_docker_exec.sh`: script helper para construir, ejecutar y administrar la imagen/contenedor.
+- `app.py`: the Flask app (three routes: `/`, `/status`, `/metrics`).
+- `Dockerfile`: instructions to build the image.
+- `run_docker.sh`: a helper script to build, run and manage the image/container.
+- `Makefile`: convenient shortcuts for common tasks (build, run, logs, stop, etc.).
 
-La app está diseñada para ser usada como ejemplo en ejercicios o demos locales.
+The app is intended for local exercises and demos.
 
 ## Quick start (Docker)
 
-Construir y ejecutar (comportamiento por defecto):
+Build and run (default behavior):
 
 ```bash
 ./run_docker.sh
 ```
 
-Esto crea la imagen `python-helloworld:local` y arranca un contenedor llamado `python-helloworld-container` exponiendo el puerto `5000`.
+This builds the image `python-helloworld:local` and starts a container named `python-helloworld-container` exposing port `5000`.
 
-Construcción sin cache:
+Build without cache:
 
 ```bash
 ./run_docker.sh --no-cache
 ```
 
-Usar un nombre/etiqueta personalizados y eliminar contenedor previo si existe:
+Use a custom image name:tag and remove an existing container if present:
 
 ```bash
 ./run_docker.sh --image myname/helloworld:dev --rm-old
 ```
 
-Etiquetar adicionalmente la imagen construida:
+Tag the built image with an additional tag:
 
 ```bash
 ./run_docker.sh --tag latest
 ```
 
-Solo construir / solo ejecutar:
+Build-only / run-only:
 
 ```bash
 ./run_docker.sh --build-only
 ./run_docker.sh --run-only
 ```
 
-## Uso del script `run_docker_exec.sh`
+## Using the helper script
 
-Opciones principales:
+Main options (see `./run_docker.sh --examples` for more):
 
-- `--no-cache` : Build sin cache
-- `--image NAME:TAG` : Usar imagen y tag personalizados
-- `--rm-old` : Si existe un contenedor con el mismo nombre, eliminarlo antes de arrancar
-- `--build-only` / `--run-only` : Solo construir o solo ejecutar
-- `--tag TAG` : Aplicar una etiqueta adicional a la imagen construida
-- `--list` : Mostrar contenedores e imágenes (no hace build ni run)
-- `--rm-container <id|name>` : Eliminar un contenedor (pregunta confirmación)
-- `--rm-image <id|name>` : Eliminar una imagen (pregunta confirmación)
-- `--force` : Omitir la confirmación al eliminar
+- `--no-cache` : build without cache
+- `--image NAME:TAG` : use a specific image name:tag
+- `--rm-old` : remove a container with the same name before running
+- `--build-only` / `--run-only` : only build or only run
+- `--tag TAG` : add an extra tag to the built image
+- `--list` : show containers and images (no build/run)
+- `--rm-container <id|name>` : remove a container (asks for confirmation unless `--force`)
+- `--rm-image <id|name>` : remove an image (asks for confirmation unless `--force`)
+- `--force` : skip confirmation for removals
 
-Ejemplos rápidos:
+You can also use the `Makefile` shortcuts (`make build`, `make run`, `make logs`, ...). Example:
 
 ```bash
-# Listar contenedores e imágenes
-./run_docker.sh --list
-
-# Eliminar contenedor (pedirá confirmación)
-./run_docker.sh --rm-container python-helloworld-container
-
-# Forzar sin confirmación
-./run_docker.sh --rm-container python-helloworld-container --force
+# Build and run via make, tagging the image as 'dev'
+make run TAG=dev ARGS='--no-cache'
 ```
 
 ## Endpoints
 
-La aplicación expone tres rutas principales (basado en `app.py`):
+The app exposes three endpoints (see `app.py`):
 
-- `GET /` — Respuesta: texto "Hello World!"
+- `GET /` — returns plain text `Hello World!`.
 
 ```bash
 curl -i http://localhost:5000/
-# HTTP/1.1 200 OK
-# Hello World!
 ```
 
-- `GET /status` — Respuesta JSON indicando salud:
+- `GET /status` — returns JSON indicating health:
 
 ```json
 {"result": "OK - healthy"}
 ```
 
-Ejemplo curl:
+Example:
 
 ```bash
 curl -s http://localhost:5000/status | jq
 ```
 
-- `GET /metrics` — Respuesta JSON con métricas simuladas:
+- `GET /metrics` — returns JSON with example metrics:
 
 ```json
 {"status":"success","code":0,"data":{"UserCount":140,"UserCountActive":23}}
 ```
 
-Ejemplo curl:
+Example:
 
 ```bash
 curl -s http://localhost:5000/metrics | jq
 ```
 
-> Nota: los valores en `/metrics` son estáticos y sirven solo como ejemplo.
+> Note: values returned by `/metrics` are static sample data for demonstration only.
 
-## Logs y debugging
+## Logs & debugging
 
-La aplicación configura logging hacia el fichero `app.log` (archivo en el working directory de la app dentro del contenedor). También captura logs de Werkzeug (requests).
+The application writes logs to `app.log` (inside the container's working directory) and captures Werkzeug/request logs.
 
-Ver logs del contenedor (en tiempo real):
+Follow container logs in real time:
 
 ```bash
 docker logs -f python-helloworld-container
 ```
 
-Si quieres inspeccionar `app.log` directamente desde el contenedor:
+Inspect `app.log` directly inside the container:
 
 ```bash
 docker exec -it python-helloworld-container tail -f /app/app.log
 ```
 
-## Solución de problemas
+## Troubleshooting
 
-- Permission denied al usar Docker: si ves mensajes relacionados con `/var/run/docker.sock`:
-  - Ejecuta con `sudo` o añade tu usuario al grupo `docker`:
+- Docker permission denied (socket access): if you see errors about `/var/run/docker.sock`:
 
-```bash
-sudo usermod -aG docker $USER
-# luego cierra sesión y vuelve a entrar
-```
+  - Run the script with `sudo`, or add your user to the `docker` group:
 
-- Si la app no responde en el puerto 5000, comprueba que el contenedor está corriendo:
+    ```bash
+    sudo usermod -aG docker $USER
+    # log out and back in for group changes to take effect
+    ```
+
+- If the app is not reachable at port 5000, verify the container is running:
 
 ```bash
 docker ps -a
 ```
 
-Licencia Matilde Pascual
+## Next steps / ideas
+
+- Rename `run_docker.sh` to a shorter name if desired (already done in this repo).
+- Add a `dev` target to the `Makefile` that mounts source code for live development.
+- Add tests and CI to validate the app and image builds.
+
+---
+
+If you want, I can commit this English README now (I will not push to remote unless you ask). Would you like me to commit it? If yes, tell me the commit message to use or I can use a default message.
