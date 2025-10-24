@@ -218,10 +218,4 @@ sudo usermod -aG docker $USER
 docker ps -a
 ```
 
-## Siguientes pasos / ideas
-
-- Renombrar `run_docker_exec.sh` a `run_docker.sh` para simplificar el nombre.
-- Añadir un `Makefile` con objetivos `make build`, `make run`, `make clean`.
-- Incorporar tests simples y un `Dockerfile` multi-stage si se añaden dependencias compiladas.
-
----
+Licencia Matilde Pascual
