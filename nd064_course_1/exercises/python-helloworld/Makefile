@@ -34,7 +34,8 @@ build-no-cache:
 
 
 run: build
-	@$(SCRIPT) $(ARGS)
+	@# Always add the 'latest' tag when running via make
+	@$(SCRIPT) $(ARGS) --tag latest
 
 run-detached: run
 
